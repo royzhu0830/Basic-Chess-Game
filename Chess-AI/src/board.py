@@ -25,18 +25,17 @@ class Board:
         self.squares[initial.row][initial.col].piece = None
         self.squares[final.row][final.col].piece = piece
 
+
         if isinstance(piece, Pawn):
             # en passant capture
             diff = final.col - initial.col
             if diff != 0 and en_passant_empty:
                 # console board move update
-                self.squares[initial.row][initial.col + diff].piece = None
-                self.squares[final.row][final.col].piece = piece
-                if not testing:
-                    sound = Sound(
-                        os.path.join('assets/sounds/capture.wav'))
-                    sound.play()
-            
+                 self.squares[initial.row][initial.col + diff].piece = None
+                 self.squares[final.row][final.col].piece = piece
+                 
+            if self.en_passant(initial, final):
+                piece.en_passant = True
             # pawn promotion
             else:
                 self.check_promotion(piece, final)
@@ -67,6 +66,8 @@ class Board:
     def castling(self, initial, final):
         return abs(initial.col - final.col) == 2
 
+    def en_passant(self, initial, final):
+        return abs(initial.row - final.row) == 2
     def set_true_en_passant(self, piece):
         
         if not isinstance(piece, Pawn):
